@@ -1,16 +1,8 @@
 {
   "todos": [
     {
-      "name": "hello",
-      "id": 2
-    },
-    {
-      "name": "byeee",
-      "id": 4
-    },
-    {
-      "name": "search me",
-      "id": 5
+      "name": "writing code",
+      "id": 6
     }
   ]
 }

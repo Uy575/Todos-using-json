@@ -14,6 +14,7 @@ function App() {
   const [userValue, setUserValue] = useState("");
   const tempTodos = useRef();
   const [searchValue, setSearchValue] = useState("");
+  const [filterValue,setFilterValue] = useState(todo)
 
   // fetching data first time from json
 
@@ -61,7 +62,7 @@ function App() {
 
   const deletingItem = async (id) => {
     const response = await axios.delete(`http://localhost:3001/todos/${id}`);
-    setTodo([response.data]);
+    setFilterValue([response.data]);
     fetching();
   };
 
@@ -73,10 +74,12 @@ function App() {
   };
 
   // filtering user search value
-
-  const filterTodo = todo.filter((F) => {
-    return F.name.toLocaleLowerCase().includes(searchValue.trim());
-  });
+  useEffect(()=>{
+    const filterTodo = todo.filter((F) => {
+      return F.name.toLocaleLowerCase().includes(searchValue.trim());
+    });
+     setFilterValue(filterTodo)
+  },[todo,searchValue])
 
   return (
     <div className="App">
@@ -98,10 +101,11 @@ function App() {
        
 
       {
-       filterTodo.length !== 0 ?(
- 
-      filterTodo.length > 0 &&
-        filterTodo.map((m) => {
+
+       filterValue.length !== 0 ?(
+        
+       filterValue.length > 0 &&
+        filterValue.map((m) => {
           return (
             <h1
             key={m.id}
@@ -121,7 +125,7 @@ function App() {
 
               {/* making modal on update button  */}
 
-              <ModalUpdate m={m} setTodo={setTodo} fetch={fetching} />
+              <ModalUpdate m={m} setTodo={setFilterValue} fetch={fetching} />
 
               {/* making delete button  */}
 

@@ -12,6 +12,7 @@ function ModalUpdate({m,setTodo,fetch}) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
   const updating = async () =>{
     const response = await axios.put(`http://localhost:3001/todos/${id}`,{
       name: updateValue
