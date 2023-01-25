@@ -6,4 +6,15 @@
   font-size: 1rem;
   margin-left: 1rem;
   margin-bottom: 1rem;
+  border-radius: 1rem;
+  height: 2rem;
+  width: 3rem;
+  background-color: gray;
+
+}
+
+input{
+  width: 30rem;
+  margin-top: 1rem;
+  outline: none;
 }

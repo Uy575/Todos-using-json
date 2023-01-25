@@ -1,80 +1,138 @@
-
-import { useEffect, useState,useRef} from 'react';
-import axios from 'axios';
-import './App.css';
-import Form from './components/Form';
-import ModalUpdate from './components/ModalUpdate'
-// import UpdateButton from './components/UpdateButton';
-import DeleteButton from './components/DeleteButton';
+import { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import "./App.css";
+import Form from "./components/Form";
+import ModalUpdate from "./components/ModalUpdate";
+import DeleteButton from "./components/DeleteButton";
+import SearchField from "./components/SearchField";
 
 function App() {
-  
-  const [todo,setTodo] = useState([])
-  const [newTodo,setNewTodo] = useState("")
-  const [userValue,setUserValue] = useState("")
+  // initilizing variables
+
+  const [todo, setTodo] = useState([]);
+  const [newTodo, setNewTodo] = useState("");
+  const [userValue, setUserValue] = useState("");
   const tempTodos = useRef();
+  const [searchValue, setSearchValue] = useState("");
 
-  const fetching = async ()=>{
+  // fetching data first time from json
 
-   const req = await fetch('http://localhost:3001/todos')
-   const res = await req.json();
-   setTodo(res)
-  }
- 
-  useEffect(()=>{
-  fetching()
-  },[])
+  const fetching = async () => {
+    const req = await fetch("http://localhost:3001/todos");
+    const res = await req.json();
+    setTodo(res);
+  };
 
+  // sending first time fetching data function to use effect
 
+  useEffect(() => {
+    fetching();
+  }, []);
+
+  // adding new data to the list and fecting again
 
   const postData = async () => {
-    if(newTodo!==""){
-      const response = await axios.post('http://localhost:3001/todos', {
-        name: newTodo
-      }); 
-      
-      setTodo([...todo,response.data])
-    
+    if (newTodo !== "") {
+      const response = await axios.post("http://localhost:3001/todos", {
+        name: newTodo,
+      });
+
+      setTodo([...todo, response.data]);
     }
+  };
 
-  }
+  tempTodos.current = postData;
 
-   tempTodos.current = postData
-   
-   
-   useEffect(()=>{
-     tempTodos.current()
-    },[newTodo])
-    
-    
-       const submit = e =>{
-          e.preventDefault()
-          setNewTodo(userValue)
-          setUserValue("")
-       }
+  //  running use effect when adding new todo
 
-       const deletingItem = async (id) =>{
-        const response = await axios.delete(`http://localhost:3001/todos/${id}`);
-        setTodo([response.data]);
-        fetching()
-       }
+  useEffect(() => {
+    tempTodos.current();
+  }, [newTodo]);
 
+  //  submiting value to list
 
+  const submit = (e) => {
+    e.preventDefault();
+    setNewTodo(userValue);
+    setUserValue("");
+  };
+
+  // deleting item from list
+
+  const deletingItem = async (id) => {
+    const response = await axios.delete(`http://localhost:3001/todos/${id}`);
+    setTodo([response.data]);
+    fetching();
+  };
+
+  // getting on change value from search field
+
+  const onSearching = (event) => {
+    const searchValues = event.target.value.toLocaleLowerCase();
+    setSearchValue(searchValues);
+  };
+
+  // filtering user search value
+
+  const filterTodo = todo.filter((F) => {
+    return F.name.toLocaleLowerCase().includes(searchValue.trim());
+  });
 
   return (
     <div className="App">
-        
-        <Form onSubmitHandler={submit} value = {userValue} onChangeHandler={(e)=>{
-               setUserValue(e.target.value)
-           }}/>
+      {/* search field component */}
+
+      <SearchField onSearchingHandler={onSearching} />
+
+      {/* Adding item to list form  */}
+
+      <Form
+        onSubmitHandler={submit}
+        value={userValue}
+        onChangeHandler={(e) => {
+          setUserValue(e.target.value);
+        }}
+      />
+
+      {/* making list  */}
+       
+
       {
-        todo.length > 0 &&  todo.map((m)=>{
-         return <h1 key={m.id} style={{width:"30rem",margin:"1rem auto",border:"2px solid green",backgroundColor:"yellow",fontSize:"1.5rem",padding:"0.5rem"}}>{m.name}
-          <ModalUpdate m={m}  setTodo ={setTodo} fetch ={fetching}/>
-          <DeleteButton  onClickHandler={()=>deletingItem(m.id)} />
-          </h1>
-        })
-      }
+       filterTodo.length !== 0 ?(
+ 
+      filterTodo.length > 0 &&
+        filterTodo.map((m) => {
+          return (
+            <h1
+            key={m.id}
+            
+            // inline css for todo card 
+            
+            style={{
+              width: "30rem",
+              margin: "1rem auto",
+              border: "2px solid skyBlue",
+              backgroundColor: "skyBlue",
+              fontSize: "1.5rem",
+                paddingTop: "0.5rem",
+              }}
+              >
+              {m.name}
+
+              {/* making modal on update button  */}
+
+              <ModalUpdate m={m} setTodo={setTodo} fetch={fetching} />
+
+              {/* making delete button  */}
+
+              <DeleteButton onClickHandler={() => deletingItem(m.id)} />
+            </h1>
+          );
+        }) 
+        ):(
+          <h1>No Match</h1>
+        )
+      }   
     </div>
   );
 }

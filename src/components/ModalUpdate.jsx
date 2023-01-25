@@ -5,10 +5,10 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import UpdateButton from './UpdateButton';
 
-function ModalUpdate({showModal,m,setTodo,fetch}) {
+function ModalUpdate({m,setTodo,fetch}) {
   const [show, setShow] = useState(false);
   const [updateValue,setUpdateValue] = useState(m.name)
-  const [id,setId] = useState(m.id)
+  const [id] = useState(m.id)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -22,7 +22,7 @@ function ModalUpdate({showModal,m,setTodo,fetch}) {
 
     handleClose();
   }
-  showModal =() => setShow(true)
+
   return (
     <>
         
